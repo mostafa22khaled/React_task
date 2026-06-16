@@ -5,6 +5,7 @@ import SearchBar from "../components/SearchBar";
 function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -13,6 +14,10 @@ function Home() {
       .then((response) => response.json())
       .then((data) => {
         setProducts(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Something went wrong");
         setLoading(false);
       });
   }, []);
@@ -35,6 +40,10 @@ function Home() {
 
   if (loading) {
     return <h1>Loading...</h1>;
+  }
+
+  if (error) {
+    return <h1>{error}</h1>;
   }
 
   return (
@@ -62,9 +71,11 @@ function Home() {
       {filteredProducts.length === 0 ? (
         <h2>No Results Found</h2>
       ) : (
-        filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))
+        <div className="products-grid">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
       )}
     </div>
   );
